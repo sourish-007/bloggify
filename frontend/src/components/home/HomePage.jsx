@@ -4,6 +4,7 @@ import { axiosInstance } from '../../lib/axios.js';
 import Navbar from './homepagecomponents/Navbar.jsx';
 import Sidebar from './homepagecomponents/sidebar/Sidebar.jsx';
 import Footer from './homepagecomponents/Footer.jsx';
+import TypewriterEffect from './homepagecomponents/TypewriterEffect.jsx';
 
 const HomePage = () => {
   const [featured, setFeatured] = useState([]);
@@ -92,6 +93,7 @@ const HomePage = () => {
             </div>
           </div>
           <div className="relative h-64 sm:h-72 md:h-96 lg:h-full">
+            <TypewriterEffect darkMode={darkMode} />
           </div>
         </div>
       </div>
