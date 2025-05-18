@@ -106,7 +106,16 @@ const HomePage = () => {
                   <Link to={`/b/${post.blogId}`}><h3 className="text-xl font-semibold mb-2 hover:text-blue-600">{post.title}</h3></Link>
                   <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} line-clamp-3 mb-4`}>{post.excerpt}</p>
                   <div className="flex items-center text-sm text-gray-500 space-x-2">
-                    <span>{post.author}</span><span>•</span><span>{post.date}</span><span>•</span><span>{post.readTime}</span>
+                    <span>{post.author}</span>
+                    <span>•</span>
+                    <span>{post.date}</span>
+                    <span>•</span>
+                    <div className="flex items-center space-x-1">
+                      <span className="text-red-500">❤</span>
+                      <span>{post.likes || 0}</span>
+                    </div>
+                    <span>•</span>
+                    <span>{post.readTime}</span>
                   </div>
                 </div>
               ))}
@@ -129,7 +138,16 @@ const HomePage = () => {
                       <Link to={`/b/${post.blogId}`}><h3 className="text-lg font-semibold mb-2 hover:text-blue-600">{post.title}</h3></Link>
                       <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-4 line-clamp-2`}>{post.excerpt}</p>
                       <div className="flex items-center text-sm text-gray-500 space-x-2">
-                        <span>{post.author}</span><span>•</span><span>{post.date}</span><span>•</span><span>{post.readTime}</span>
+                        <span>{post.author}</span>
+                        <span>•</span>
+                        <span>{post.date}</span>
+                        <span>•</span>
+                        <div className="flex items-center space-x-1">
+                          <span className="text-red-500">❤</span>
+                          <span>{post.likes || 0}</span>
+                        </div>
+                        <span>•</span>
+                        <span>{post.readTime}</span>
                       </div>
                     </div>
                   ))}

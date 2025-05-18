@@ -45,9 +45,9 @@ const BlogViewer = () => {
       .then(res => {
         const data = res.data.data;
         setBlog(data);
-        setLikes(data.likes);
-        setLiked(data.likedByUser);
-        setFollowing(data.authorFollowing);
+        setLikes(data.likes || 0);
+        setLiked(data.likedByUser || false);
+        setFollowing(data.authorFollowing || false);
       })
       .catch(err => console.error(err));
   }, [blogId]);
@@ -96,12 +96,33 @@ const BlogViewer = () => {
     if (!blog) return;
     
     try {
-     
-      const user = localStorage.getItem('user');
-      const username = user.username;
+      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+      const currentUsername = userData.username;
+      
+      if (!currentUsername) {
+        console.log('No username found in localStorage');
+        navigate('/login');
+        return;
+      }
+
+      const authorUsername = blog.authorUsername;
+      
+      console.log('Blog author (name):', blog.author);
+      console.log('Author username:', authorUsername);
+      
+      if (!authorUsername) {
+        console.log('Could not find username for author:', blog.author);
+        return;
+      }
+
+      if (currentUsername === authorUsername) {
+        console.log('Cannot follow yourself');
+        return;
+      }
+      
       const url = following
-        ? `/user/${username}/unfollow`  
-        : `/user/${username}/follow`;  
+        ? `/user/${authorUsername}/unfollow`  
+        : `/user/${authorUsername}/follow`;  
         
       console.log('Attempting to follow/unfollow with URL:', url);
       const res = await axiosInstance.post(url);
@@ -126,7 +147,7 @@ const BlogViewer = () => {
 
   if (!blog) return null;
 
-  const isAuthor = currentUser && blog.author === currentUser.username;
+  const isAuthor = currentUser && blog.authorUsername === currentUser.username;
 
   return (
     <div className={`${darkMode ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'} min-h-screen flex flex-col`}>
@@ -146,7 +167,7 @@ const BlogViewer = () => {
           {isLoggedIn && !isAuthor && (
             <button
               onClick={toggleFollow}
-              className={`ml-auto px-4 py-1 text-sm rounded-md border ${
+              className={`ml-auto px-4 py-1 text-sm rounded-md border cursor-pointer ${
                 following
                   ? 'bg-gray-700 text-white border-gray-600'
                   : 'bg-transparent text-blue-600 border-blue-600'

@@ -56,13 +56,40 @@ export const getAllBlogs = async (req, res) => {
 };
 
 export const getBlogById = async (req, res) => {
-  const blog = await Blog.findOne({ blogId: req.params.blogId }).lean();
-  if (!blog) return res.status(404).json({ success: false, message: "Blog not found" });
-  await Blog.findOneAndUpdate({ blogId: req.params.blogId }, { $inc: { views: 1 } });
-  if (req.user) {
-    await User.findOneAndUpdate({ username: req.user.username }, { $addToSet: { readHistory: blog.blogId } });
+  try {
+    const blog = await Blog.findOne({ blogId: req.params.blogId }).lean();
+    if (!blog) return res.status(404).json({ success: false, message: "Blog not found" });
+    
+    await Blog.findOneAndUpdate({ blogId: req.params.blogId }, { $inc: { views: 1 } });
+    
+    const authorUser = await User.findOne({ name: blog.author }).lean();
+    const authorUsername = authorUser ? authorUser.username : null;
+    
+    let likedByUser = false;
+    let authorFollowing = false;
+    
+    if (req.user) {
+      await User.findOneAndUpdate({ username: req.user.username }, { $addToSet: { readHistory: blog.blogId } });
+      
+      const currentUser = await User.findOne({ username: req.user.username }).lean();
+      if (currentUser && authorUsername) {
+        likedByUser = currentUser.likedBlogs.includes(blog.blogId);
+        authorFollowing = currentUser.following.includes(authorUsername);
+      }
+    }
+    
+    const response = {
+      ...blog,
+      authorUsername,
+      likedByUser,
+      authorFollowing
+    };
+    
+    res.json({ success: true, data: response });
+  } catch (err) {
+    console.error("Get blog error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
-  res.json({ success: true, data: blog });
 };
 
 export const updateBlog = async (req, res) => {
