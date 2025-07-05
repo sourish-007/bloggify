@@ -9,7 +9,7 @@ const getBaseURL = () => {
     return 'http://localhost:5000';
   }
   
-  return 'https://bloggify-z8j2.onrender.com';
+  return 'https://bloggify-1-f0zl.onrender.com';
 };
 
 const axiosInstance = axios.create({
